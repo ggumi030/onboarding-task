@@ -1,9 +1,18 @@
 package com.spring.onboardingtask.unit;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
+import com.spring.onboardingtask.global.config.JwtConfig;
 import com.spring.onboardingtask.global.jwt.JwtService;
 import com.spring.onboardingtask.user.entity.User;
 import com.spring.onboardingtask.user.eums.UserRole;
-import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Base64;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -11,6 +20,13 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class JwtTest {
     private JwtService jwtService = new JwtService();
     private User testUser;
+    private static Key key;
+
+    @BeforeAll
+    public static void init() {
+        byte[] bytes = Base64.getDecoder().decode("a2V2aW4xMjM0MTIzNDEyMzQxMjM0MTIzNDEyMzQxMjM0");
+        key = Keys.hmacShaKeyFor(bytes);
+    }
 
     private void testUserSetup() {
         testUser = User.builder()
@@ -26,8 +42,8 @@ public class JwtTest {
     public void test_generateToken() {
         testUserSetup();
         Long tokenTime = 180000L;
-        //String token = jwtService.createToken(testUser, tokenTime);
-        //assertThat(token, notNullValue());
+        String token = jwtService.createToken(testUser, tokenTime, key);
+        assertThat(token, notNullValue());
     }
 
     @Test
@@ -36,10 +52,10 @@ public class JwtTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         testUserSetup();
         Long tokenTime = 180000L;
-        //String token = jwtService.createToken(testUser, tokenTime);
+        String token = jwtService.createToken(testUser, tokenTime, key);
 
-        //boolean answer = jwtService.isValidToken(token, request);
-        //assertThat(answer, true);
+        boolean answer = jwtService.isValidToken(token.replace(JwtConfig.BEARER_PREFIX, ""), request, key);
+        assertEquals(answer,true);
     }
 
     @Test
@@ -48,10 +64,10 @@ public class JwtTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         testUserSetup();
         Long tokenTime = 1L;
-        //String token = jwtService.createToken(testUser, tokenTime);
+        String token = jwtService.createToken(testUser, tokenTime, key);
 
-        //jwtService.isValidToken(token, request);
-        //asserThat((String)request.getAttribute("error"), "Expired JWT token, 만료된 JWT token 입니다.")
+        jwtService.isValidToken(token.replace(JwtConfig.BEARER_PREFIX, ""), request, key);
+        assertEquals((String)request.getAttribute("error"), "Expired JWT token, 만료된 JWT token 입니다.");
     }
 
     @Test
@@ -60,11 +76,11 @@ public class JwtTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         testUserSetup();
         Long tokenTime = 180000L;
-        //String token = jwtService.createToken(testUser, tokenTime);
-        //request.addHeader("Authorization",token);
+        String token = jwtService.createToken(testUser, tokenTime, key);
+        request.addHeader("Authorization",token);
 
-        //String testToken = getToken(request);
-        //asserThat(testToken, token);
+        String testToken = jwtService.getToken(request);
+        assertEquals("Bearer " + testToken, token);
     }
 
     @Test
@@ -72,10 +88,10 @@ public class JwtTest {
     public void test_getClaims() {
         testUserSetup();
         Long tokenTime = 180000L;
-        //String token = jwtService.createToken(testUser, tokenTime);
+        String token = jwtService.createToken(testUser, tokenTime, key);
 
-        //String claims = getClaims(token);
-        //asserThat(claims, notNullValue());
+        Claims claims = jwtService.getClaims(token.replace(JwtConfig.BEARER_PREFIX, ""), key);
+        assertThat(claims, notNullValue());
     }
 
 }

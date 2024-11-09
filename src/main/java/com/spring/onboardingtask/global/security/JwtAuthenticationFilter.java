@@ -1,5 +1,6 @@
 package com.spring.onboardingtask.global.security;
 
+import com.spring.onboardingtask.global.config.JwtConfig;
 import com.spring.onboardingtask.global.jwt.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -30,9 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtService.getToken(request);
         log.debug("token : {}", token);
         if (token != null) {
-            if (jwtService.isValidToken(token, request)) {
+            if (jwtService.isValidToken(token, request, JwtConfig.key)) {
                 log.debug("validToken");
-                Claims claims = jwtService.getClaims(token);
+                Claims claims = jwtService.getClaims(token, JwtConfig.key);
                 setAuthentication(claims.getSubject());
             }
         }
