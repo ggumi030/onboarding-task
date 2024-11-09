@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,13 @@ public class User extends Timestamped {
     @Column(name = "authority_name", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRole authorityName = UserRole.USER;
+
+    @Builder
+    public User(String username, String password, String nickname, UserRole authorityName) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.authorityName = authorityName;
+    }
+
 }
