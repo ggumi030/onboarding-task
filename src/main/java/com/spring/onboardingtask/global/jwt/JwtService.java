@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
 import java.util.Date;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,7 +17,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class JwtService {
 
-    public String createToken(User user, Long tokenTime) {
+    public String createToken(User user, Long tokenTime, Key key) {
         Date date = new Date();
 
         String username = user.getUsername();
@@ -28,14 +29,14 @@ public class JwtService {
                 .setExpiration(new Date(date.getTime() + tokenTime))
                 .claim(JwtConfig.AUTHORIZATION_KEY, auth)
                 .setIssuedAt(date)
-                .signWith(JwtConfig.key, JwtConfig.signatureAlgorithm)
+                .signWith(key, JwtConfig.signatureAlgorithm)
                 .compact();
     }
 
-    public boolean isValidToken(String token, HttpServletRequest request) {
+    public boolean isValidToken(String token, HttpServletRequest request, Key key) {
 
         try {
-            Jwts.parserBuilder().setSigningKey(JwtConfig.key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException |
                  io.jsonwebtoken.security.SignatureException e) {
@@ -63,9 +64,9 @@ public class JwtService {
 
     }
 
-    public Claims getClaims(String token) {
+    public Claims getClaims(String token, Key key) {
 
-        return Jwts.parserBuilder().setSigningKey(JwtConfig.key).build().parseClaimsJws(token)
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
             .getBody();
 
     }
