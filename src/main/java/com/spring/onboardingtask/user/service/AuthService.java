@@ -82,7 +82,7 @@ public class AuthService {
         String accessToken = jwtService.createToken(user, JwtConfig.accessTokenTime, JwtConfig.key);
 
         return LoginResDto.builder()
-            .token(accessToken)
+            .token(accessToken.replace(JwtConfig.BEARER_PREFIX,""))
             .build();
     }
 
