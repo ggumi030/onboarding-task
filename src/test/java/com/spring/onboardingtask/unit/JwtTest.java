@@ -4,14 +4,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.spring.onboardingtask.user.entity.Authority;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import com.spring.onboardingtask.global.config.JwtConfig;
 import com.spring.onboardingtask.global.jwt.JwtService;
 import com.spring.onboardingtask.user.entity.User;
-import com.spring.onboardingtask.user.eums.UserRole;
 import java.security.Key;
 import java.util.Base64;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,9 @@ public class JwtTest {
             .username("ggumi")
             .password("ggumi1234")
             .nickname("ggu")
-            .authorityName(UserRole.USER)
+            .authorities(List.of(Authority.builder()
+                .authorityName("ROLE_USER")
+                .build()))
             .build();
     }
 
