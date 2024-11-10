@@ -1,6 +1,7 @@
 package com.spring.onboardingtask.global.jwt;
 
 import com.spring.onboardingtask.global.config.JwtConfig;
+import com.spring.onboardingtask.user.entity.Authority;
 import com.spring.onboardingtask.user.entity.User;
 import com.spring.onboardingtask.user.eums.UserRole;
 import io.jsonwebtoken.Claims;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,7 +23,7 @@ public class JwtService {
         Date date = new Date();
 
         String username = user.getUsername();
-        UserRole auth = user.getAuthorityName();
+        List<Authority> auth = user.getAuthorities();
 
         return JwtConfig.BEARER_PREFIX +
             Jwts.builder()
