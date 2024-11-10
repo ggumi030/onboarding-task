@@ -1,5 +1,7 @@
 package com.spring.onboardingtask.user.controller;
 
+import com.spring.onboardingtask.user.dto.LoginReqDto;
+import com.spring.onboardingtask.user.dto.LoginResDto;
 import com.spring.onboardingtask.user.dto.SignupReqDto;
 import com.spring.onboardingtask.user.dto.SignupResDto;
 import com.spring.onboardingtask.user.service.AuthService;
@@ -19,6 +21,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<SignupResDto> signup(@Valid @RequestBody SignupReqDto signupReqDto) {
         SignupResDto resDto = authService.signup(signupReqDto);
+        return ResponseEntity.ok().body(resDto);
+    }
+
+    @PostMapping("/sign")
+    public ResponseEntity<LoginResDto> login(@Valid @RequestBody LoginReqDto loginReqDto) {
+        LoginResDto resDto = authService.login(loginReqDto);
         return ResponseEntity.ok().body(resDto);
     }
 
