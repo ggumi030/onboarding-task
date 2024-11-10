@@ -52,13 +52,7 @@ public class AuthService {
             ), HttpStatus.CONFLICT);
         }
 
-        Authority auth = authorityRepository.findByAuthorityName("ROLE_" + UserRole.USER.toString())
-            .orElseThrow(() -> new CustomException(messageSource.getMessage(
-                "authority.not.found",
-                null,
-                "Authority not found",
-                Locale.getDefault()
-            ), HttpStatus.NOT_FOUND));
+        Authority auth = getAuthority(UserRole.USER.toString());
 
         User newUser = User.builder()
             .username(username)
@@ -92,5 +86,14 @@ public class AuthService {
             .build();
     }
 
+    private Authority getAuthority(String userRole) {
+        return authorityRepository.findByAuthorityName("ROLE_" + UserRole.USER.toString())
+            .orElseThrow(() -> new CustomException(messageSource.getMessage(
+                "authority.not.found",
+                null,
+                "Authority not found",
+                Locale.getDefault()
+            ), HttpStatus.NOT_FOUND));
+    }
 
 }
