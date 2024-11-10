@@ -1,9 +1,11 @@
 package com.spring.onboardingtask.global.security;
 
+import com.spring.onboardingtask.user.entity.Authority;
 import com.spring.onboardingtask.user.entity.User;
 import com.spring.onboardingtask.user.eums.UserRole;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,13 +20,14 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserRole userAuth = user.getAuthorityName();
-        String auth = userAuth.getAuthority();
+        List<Authority> userAuth = user.getAuthorities();
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(auth);
-        Collection<GrantedAuthority> auths = new ArrayList<>();
-        auths.add(simpleGrantedAuthority);
-        return auths;
+        for (Authority authority : userAuth) {
+            authorities.add(new SimpleGrantedAuthority(authority.getAuthorityName()));
+        }
+
+        return authorities;
     }
 
     public User getUser() {
