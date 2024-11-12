@@ -13,4 +13,4 @@
 
 **swagger (배포 주소)**
 
-http://ec2-43-203-241-54.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/index.html
+http://ec2-43-203-124-81.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/index.html
